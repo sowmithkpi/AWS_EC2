@@ -44,3 +44,23 @@ resource "aws_internet_gateway" "igw" {
     Name = "Interview-IGW"
   }
 }
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "Public-Route-Table"
+  }
+}
+
+resource "aws_route" "public_route" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = var.destination_cidr_block
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+resource "aws_route_table_association" "public_subnet_association" {
+  count = length(data.aws_availability_zones.available.names)
+  subnet_id      = aws_subnet.public_subnets[count.index].id
+  route_table_id = aws_route_table.public.id
+}
