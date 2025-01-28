@@ -64,3 +64,25 @@ resource "aws_route_table_association" "public_subnet_association" {
   subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.public.id
 }
+
+resource "aws_security_group" "nginx_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = var.ingress_from_port 
+    to_port     = var.ingress_to_port   
+    protocol    = "tcp"
+    cidr_blocks = [var.ingress_cidr_blocks] 
+  }
+
+  egress {
+    from_port   = var.egress_from_port 
+    to_port     = var.egress_from_port  
+    protocol    = "-1"
+    cidr_blocks = [var.egress_cidr_blocks] 
+  }
+
+  tags = {
+    Name = "Nginx-SG"
+  }
+}
