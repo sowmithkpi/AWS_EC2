@@ -86,3 +86,14 @@ resource "aws_security_group" "nginx_sg" {
     Name = "Nginx-SG"
   }
 }
+
+resource "aws_instance" "web_instance" {
+  ami           = var.ami
+  instance_type = var.instance_type
+  subnet_id                   = aws_subnet.public_subnets[1].id
+  vpc_security_group_ids      = [aws_security_group.nginx_sg.id]
+
+    tags = {
+    Name = "Nginx-Instance"
+  }
+}
